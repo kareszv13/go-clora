@@ -18,7 +18,8 @@ Maintainer: Sylvain Miermont
 /* --- DEPENDANCIES --------------------------------------------------------- */
 
 /* fix an issue between POSIX and C99 */
-#if __STDC_VERSION__ >= 199901L
+#ifdef __MACH__
+#elif __STDC_VERSION__ >= 199901L
     #define _XOPEN_SOURCE 600
 #else
     #define _XOPEN_SOURCE 500
@@ -43,10 +44,9 @@ Maintainer: Sylvain Miermont
 /* -------------------------------------------------------------------------- */
 /* --- PRIVATE CONSTANTS ---------------------------------------------------- */
 
-#define VERS                    103
-#define READS_WHEN_ERROR        16 /* number of times a read is repeated if there is a read error */
-#define BUFF_SIZE               1024 /* maximum number of bytes that we can write in sx1301 RX data buffer */
-#define DEFAULT_TX_NOTCH_FREQ   129E3
+#define VERS                103
+#define READS_WHEN_ERROR    16 /* number of times a read is repeated if there is a read error */
+#define BUFF_SIZE           1024 /* maximum number of bytes that we can write in sx1301 RX data buffer */
 
 /* -------------------------------------------------------------------------- */
 /* --- PRIVATE VARIABLES (GLOBAL) ------------------------------------------- */
@@ -140,7 +140,7 @@ int main(int argc, char **argv)
     sigaction(SIGTERM, &sigact, NULL);
 
     /* start SPI link */
-    i = lgw_connect(false, DEFAULT_TX_NOTCH_FREQ);
+    i = lgw_connect();
     if (i != LGW_REG_SUCCESS) {
         MSG("ERROR: lgw_connect() did not return SUCCESS");
         return EXIT_FAILURE;

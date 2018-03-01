@@ -45,10 +45,7 @@ endif
 
 ### general build targets
 
-all: libloragw.a test_loragw_spi test_loragw_reg test_loragw_hal test_loragw_gps test_loragw_cal
-gofmt -e -s -w .
-	go vet .
-go run tst/test_lora_spi.go
+all: libloragw.a test_loragw_spi test_loragw_reg test_loragw_hal test_loragw_gps test_loragw_cal gorunner
 
 clean:
 	rm -f libloragw.a
@@ -114,7 +111,8 @@ libloragw.a: $(OBJDIR)/loragw_hal.o $(OBJDIR)/loragw_gps.o $(OBJDIR)/loragw_reg.
 ### test programs
 
 test_loragw_spi: tst/test_loragw_spi.c libloragw.a
-	$(CC) $(CFLAGS) -L. $< -o $@ $(LIBS)
+	$(CC) $(CFLAGS) -L. $< -c -o test/test_loragw_spi.o test/test_loragw_spi.c
+	$(CC) $(CFLAGS) -L. $< -shared -o test_loragw_spi.so test/test_loragw_spi.o
 
 test_loragw_reg: tst/test_loragw_reg.c libloragw.a
 	$(CC) $(CFLAGS) -L. $< -o $@ $(LIBS)
@@ -127,5 +125,11 @@ test_loragw_gps: tst/test_loragw_gps.c libloragw.a
 
 test_loragw_cal: tst/test_loragw_cal.c libloragw.a src/cal_fw.var
 	$(CC) $(CFLAGS) -L. $< -o $@ $(LIBS)
+
+
+gorunner:
+	gofmt -e -s -w .
+	go vet .
+	LD_LIBRARY_PATH=. go run test_loragw_spi.go
 
 ### EOF

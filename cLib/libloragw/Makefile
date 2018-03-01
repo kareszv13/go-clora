@@ -46,6 +46,9 @@ endif
 ### general build targets
 
 all: libloragw.a test_loragw_spi test_loragw_reg test_loragw_hal test_loragw_gps test_loragw_cal
+gofmt -e -s -w .
+	go vet .
+go run tst/test_lora_spi.go
 
 clean:
 	rm -f libloragw.a
